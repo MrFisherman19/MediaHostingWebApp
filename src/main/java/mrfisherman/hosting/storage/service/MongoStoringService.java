@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,18 +19,26 @@ public class MongoStoringService implements StoringService {
     private final DocumentRepository documentRepository;
 
     @Override
-    public String storeFile(String fileName, String username, MultipartFile file) throws IOException {
+    public Document storeFile(String fileName, String username, MultipartFile file) throws IOException {
        Document document = new Document();
        document.setFileName(fileName);
        document.setUsername(username);
        document.setContentType(file.getContentType());
+       document.setSize(file.getSize());
        document.setBinary(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
-       return documentRepository.save(document).getFileId();
+       return documentRepository.save(document);
     }
 
     @Override
     public Document loadFileByUsernameAndFileId(String username, String fileId) throws FileNotFoundException {
-        //TODO username
+        //TODO checking username
         return documentRepository.findById(fileId).orElseThrow(() -> new FileNotFoundException("File with given id cannot be found!"));
     }
+
+    @Override
+    public List<Document> getFilesMetadataForUser(String username) {
+        return documentRepository.findDocumentsMetadataByUsername(username);
+    }
+
+
 }

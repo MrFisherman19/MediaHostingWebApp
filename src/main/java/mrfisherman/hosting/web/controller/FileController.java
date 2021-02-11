@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,12 +30,13 @@ public class FileController {
     public UploadFileResponse uploadFile(@RequestParam("filename") String fileName, @RequestParam("file") MultipartFile file,
                                          @AuthenticationPrincipal User user) throws IOException {
 
-        String fileId = storingService.storeFile(fileName, user.getUsername(), file);
+        Document fileAfterSaving = storingService.storeFile(fileName, user.getUsername(), file);
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download")
-                .queryParam("fileId", fileId)
+                .queryParam("fileId", fileAfterSaving.getFileId())
                 .toUriString();
-        return new UploadFileResponse(fileId, fileDownloadUri, file.getSize());
+        return new UploadFileResponse(fileAfterSaving.getFileId(), fileDownloadUri,
+                fileAfterSaving.getContentType(), fileAfterSaving.getSize(), fileAfterSaving.getCreated());
     }
 
     @GetMapping(value = "/download")
@@ -48,6 +50,11 @@ public class FileController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
                 .header(HttpHeaders.CONTENT_TYPE, file.getContentType())
                 .body(resource);
+    }
+
+    @GetMapping("/files")
+    private List<Document> getDocumentsMetadataByUser(@AuthenticationPrincipal User user) {
+        return storingService.getFilesMetadataForUser(user.getUsername());
     }
 
     @ExceptionHandler(value = IOException.class)
