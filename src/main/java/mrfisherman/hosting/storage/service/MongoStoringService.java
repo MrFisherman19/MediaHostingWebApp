@@ -31,7 +31,6 @@ public class MongoStoringService implements StoringService {
 
     @Override
     public Document loadFileByUsernameAndFileId(String username, String fileId) throws FileNotFoundException {
-        //TODO checking username
         return documentRepository.findById(fileId).orElseThrow(() -> new FileNotFoundException("File with given id cannot be found!"));
     }
 

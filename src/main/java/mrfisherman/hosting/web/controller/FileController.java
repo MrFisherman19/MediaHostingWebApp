@@ -43,6 +43,8 @@ public class FileController {
     public ResponseEntity<Resource> download(@AuthenticationPrincipal User user,
                                              @RequestParam("fileId") String fileId) throws FileNotFoundException {
 
+        System.out.println(user.getUsername());
+
         Document file = storingService.loadFileByUsernameAndFileId(user.getUsername(), fileId);
         Resource resource = new ByteArrayResource(file.getBinary().getData());
 
@@ -60,6 +62,7 @@ public class FileController {
     @ExceptionHandler(value = IOException.class)
     public ExceptionResponse ioExceptionHandler(Exception e) {
         return new ExceptionResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+
     }
 
 }
