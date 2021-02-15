@@ -27,5 +27,5 @@ public class Document {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm a z")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date created = new Date();
+    private Date created;
 }

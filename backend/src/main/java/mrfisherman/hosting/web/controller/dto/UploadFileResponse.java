@@ -12,15 +12,17 @@ import java.util.Date;
 public class UploadFileResponse {
 
     private String fileId;
+    private String fileName;
     private String fileDownloadUri;
-    private String fileType;
+    private String contentType;
     private Date created;
     private long size;
 
-    public UploadFileResponse(String fileId, String fileDownloadUri, String fileType, long size,  Date created) {
+    public UploadFileResponse(String fileId, String fileName, String fileDownloadUri, String contentType, long size, Date created) {
         this.fileId = fileId;
+        this.fileName = fileName;
         this.fileDownloadUri = fileDownloadUri;
-        this.fileType = fileType;
+        this.contentType = contentType;
         this.size = size;
         this.created = created;
     }
